@@ -4,10 +4,15 @@ import numpy as np
 from numba import jit
 
 # camera settings
-I_Darkcurrent = 7.7
-exposure_time = 4
-f_stop = 5
-ISO = 100 # basically brightness
+I_Darkcurrent = 150.5
+exposure_time = 0.5
+f_stop = 2.4
+ISO = 64 # basically brightness
+
+# I_Darkcurrent = 50.1
+# exposure_time = 0.1
+# f_stop = 1
+# ISO = 70 # basically brightness
 
 @jit(nopython=True)
 def rg_ratio_normalize(imgarr):
@@ -22,7 +27,7 @@ def rg_ratio_normalize(imgarr):
             ratio = pyrometry_calibration_formula(g_norm, r_norm)
 
             # remove edge cases
-            if ratio < 600 or ratio > 1200:
+            if ratio > 1900:
                 ratio = 0
 
             imgnew[i][j] = [ratio, ratio, ratio]
@@ -42,15 +47,26 @@ def pyrometry_calibration_formula(i_ng, i_nr):
         (i_ng / i_nr) ** 3
     ) + 3753.5
 
+# read image & crop
 img = cv.imread('01-0001.png')
+img = img[400:, 420:1200]
+
+# img = cv.imread('ember_test.png')
 
 img = rg_ratio_normalize(img)
+
+# apply smoothing conv kernel
 kernel = np.array([
-    [0.1, 0.1, 0.1],
-    [0.1, 1, 0.1],
-    [0.1, 0.1, 0.1],
+    [1/2, 1/2],
+    [1/2, 1/2],
 ])
+
+# Scaling adjustment factor
+kernel *= 3/5
+
 img = cv.filter2D(src=img, ddepth=-1, kernel=kernel)
-# img = cv.bitwise_not(img)
+
+# apply jet color map
 img = cv.applyColorMap(img, cv.COLORMAP_JET)
+
 cv.imwrite('01-0001-transformed-ratio.png', img)
