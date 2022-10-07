@@ -4,7 +4,7 @@ import numpy as np
 from numba import jit
 
 # camera settings
-file = '01-0003.png'
+file = '01-0001.png'
 I_Darkcurrent = 150.5
 exposure_time = 0.5
 f_stop = 2.4

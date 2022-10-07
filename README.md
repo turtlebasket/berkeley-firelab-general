@@ -18,4 +18,4 @@
 
 According to general researcher consensus, ratio pyrometry is supposed to be more accurate.
 
-![](01-0001-transformed-ratio.png)
+![](01-0001-cropped-transformed-ratio.png)
