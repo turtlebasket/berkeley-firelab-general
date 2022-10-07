@@ -13,3 +13,9 @@
 **Grayscale pyrometry result:**
 
 ![](01-0001-transformed-grayscale.png)
+
+**Ratio pyrometry result (with 2x2 convolutional smoothing):**
+
+According to general researcher consensus, ratio pyrometry is supposed to be more accurate.
+
+![](01-0001-transformed-ratio.png)

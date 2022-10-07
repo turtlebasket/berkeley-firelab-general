@@ -4,15 +4,20 @@ import numpy as np
 from numba import jit
 
 # camera settings
+file = '01-0003.png'
 I_Darkcurrent = 150.5
 exposure_time = 0.5
 f_stop = 2.4
 ISO = 64 # basically brightness
 
-# I_Darkcurrent = 50.1
-# exposure_time = 0.1
-# f_stop = 1
-# ISO = 70 # basically brightness
+# runtime config
+MAX_GR_RATIO = 2000
+MIN_GR_RATIO = None
+
+x1 = 420
+x2 = 1200
+y1 = 400
+y2 = -1
 
 @jit(nopython=True)
 def rg_ratio_normalize(imgarr):
@@ -27,7 +32,7 @@ def rg_ratio_normalize(imgarr):
             ratio = pyrometry_calibration_formula(g_norm, r_norm)
 
             # remove edge cases
-            if ratio > 1900:
+            if MAX_GR_RATIO != None and ratio > MAX_GR_RATIO or MIN_GR_RATIO != None and ratio < MIN_GR_RATIO:
                 ratio = 0
 
             imgnew[i][j] = [ratio, ratio, ratio]
@@ -48,8 +53,11 @@ def pyrometry_calibration_formula(i_ng, i_nr):
     ) + 3753.5
 
 # read image & crop
-img = cv.imread('01-0001.png')
-img = img[400:, 420:1200]
+file_name = file.split(".")[0]
+file_ext = file.split(".")[1]
+img = cv.imread(file)
+img = img[y1:y2, x1:x2]
+cv.imwrite(f'{file_name}-cropped.{file_ext}', img)
 
 # img = cv.imread('ember_test.png')
 
@@ -61,6 +69,19 @@ kernel = np.array([
     [1/2, 1/2],
 ])
 
+# kernel = np.array([
+#     [1/3, 1/3, 1/3],
+#     [1/3, 1/3, 1/3],
+#     [1/3, 1/3, 1/3],
+# ])
+
+# kernel = np.array([
+#     [1/4, 1/4, 1/4, 1/4],
+#     [1/4, 1/4, 1/4, 1/4],
+#     [1/4, 1/4, 1/4, 1/4],
+#     [1/4, 1/4, 1/4, 1/4],
+# ])
+
 # Scaling adjustment factor
 kernel *= 3/5
 
@@ -69,4 +90,4 @@ img = cv.filter2D(src=img, ddepth=-1, kernel=kernel)
 # apply jet color map
 img = cv.applyColorMap(img, cv.COLORMAP_JET)
 
-cv.imwrite('01-0001-transformed-ratio.png', img)
+cv.imwrite(f'{file_name}-cropped-transformed-ratio.{file_ext}', img)
