@@ -2,25 +2,35 @@ import math
 import cv2 as cv
 import numpy as np
 from numba import jit
+import json
 
 # camera settings
 file = '01-0001.png'
 I_Darkcurrent = 150.5
-exposure_time = 0.5
+exposure_time = 0.500
 f_stop = 2.4
 ISO = 64 # basically brightness
 
-# runtime config
-MAX_GR_RATIO = 2000
-MIN_GR_RATIO = None
+# pyrometry config
+MAX_GR_RATIO = 1200
+MIN_GR_RATIO = 0
+# original range from paper
+# MAX_GR_RATIO = 1200
+# MIN_GR_RATIO = 600
 
+# Cropping config
 x1 = 420
 x2 = 1200
 y1 = 400
 y2 = -1
 
+# post-processing
+smoothing_radius = 2
+
 @jit(nopython=True)
 def rg_ratio_normalize(imgarr):
+    tmin = MAX_GR_RATIO
+    tmax = 0
     imgnew = imgarr
     for i in range(len(imgarr)):
         for j in range(len(imgarr[i])):
@@ -29,21 +39,36 @@ def rg_ratio_normalize(imgarr):
             g_norm = normalization_func(px[1])
 
             # apply camera calibration func
-            ratio = pyrometry_calibration_formula(g_norm, r_norm)
+            temp_C = pyrometry_calibration_formula(g_norm, r_norm)
 
-            # remove edge cases
-            if MAX_GR_RATIO != None and ratio > MAX_GR_RATIO or MIN_GR_RATIO != None and ratio < MIN_GR_RATIO:
-                ratio = 0
+            # remove pixels outside calibration range
+            if MAX_GR_RATIO != None and temp_C > MAX_GR_RATIO or MIN_GR_RATIO != None and temp_C < MIN_GR_RATIO:
+                temp_C = 0
 
-            imgnew[i][j] = [ratio, ratio, ratio]
-    return imgnew
+            # update min & max
+            if temp_C < tmin and temp_C >= 0:
+                tmin = temp_C
+            if temp_C > tmax:
+                tmax = temp_C
+
+            imgnew[i][j] = [temp_C, temp_C, temp_C]
+    return imgnew, tmin, tmax
+
 
 @jit(nopython=True)
 def normalization_func(i):
+    """
+    does something to the pixels that i don't understand lol
+    """
     return (i - I_Darkcurrent) * (f_stop ** 2) / (ISO * exposure_time)
+
 
 @jit(nopython=True)
 def pyrometry_calibration_formula(i_ng, i_nr):
+    """
+    Given the green-red ratio, calculates an approximate temperature 
+    in Celsius.
+    """
     return 362.73 * math.log10(
         (i_ng/i_nr) ** 3
     ) + 2186.7 * math.log10(
@@ -51,6 +76,7 @@ def pyrometry_calibration_formula(i_ng, i_nr):
     ) + 4466.5 * math.log10(
         (i_ng / i_nr) ** 3
     ) + 3753.5
+
 
 # read image & crop
 file_name = file.split(".")[0]
@@ -61,29 +87,17 @@ cv.imwrite(f'{file_name}-cropped.{file_ext}', img)
 
 # img = cv.imread('ember_test.png')
 
-img = rg_ratio_normalize(img)
+img, tmin, tmax = rg_ratio_normalize(img)
 
-# apply smoothing conv kernel
-kernel = np.array([
-    [1/2, 1/2],
-    [1/2, 1/2],
-])
+print(f"min: {tmin}°C")
+print(f"max: {tmax}°C")
 
-# kernel = np.array([
-#     [1/3, 1/3, 1/3],
-#     [1/3, 1/3, 1/3],
-#     [1/3, 1/3, 1/3],
-# ])
-
-# kernel = np.array([
-#     [1/4, 1/4, 1/4, 1/4],
-#     [1/4, 1/4, 1/4, 1/4],
-#     [1/4, 1/4, 1/4, 1/4],
-#     [1/4, 1/4, 1/4, 1/4],
-# ])
-
-# Scaling adjustment factor
-kernel *= 3/5
+# build & apply smoothing conv kernel
+k = []
+for i in range(smoothing_radius):
+    k.append([1/(smoothing_radius**2) for i in range(smoothing_radius)])
+    # for j in range(smoothing_radius):
+kernel = np.array(k)
 
 img = cv.filter2D(src=img, ddepth=-1, kernel=kernel)
 
