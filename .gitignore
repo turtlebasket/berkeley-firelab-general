@@ -2,8 +2,8 @@
 
 .vscode/
 *.swp
-uploads/*
-!uploads/.gitkeep
+static/*
+!static/.gitkeep
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

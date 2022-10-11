@@ -32,7 +32,7 @@ def rg_ratio_normalize(
     tmin = MAX_TEMP
     tmax = 0
 
-    imgnew = imgarr
+    imgnew = imgarr.copy()
     for i in range(len(imgarr)):
         for j in range(len(imgarr[i])):
             px = imgarr[i][j]
@@ -122,7 +122,7 @@ def ratio_pyrometry_pipeline(
     for i in range(key_entries):
         res_temp = tmin + (i * step)
         res_color = (tmax - (i * step)) / MAX_TEMP * 255
-        temps.append(res_temp)
+        temps.append(math.floor(res_temp))
         key_img_arr[0].append([res_color, res_color, res_color])
 
     key_img = np.array(key_img_arr).astype(np.uint8)

@@ -8,49 +8,53 @@
     </tr>
     <tr>
         {# Original image #}
-        <td>
-        <img data="{{ img_orig_bytes }}" alt="original image">
+        <td class="img-table-cell" id="orig-cell">
+            {# <img src="data:image/png;base64,{{ img_orig_b64 }}" alt="original image"> #}
+            <img class="img-out" src="{{ img_orig_path }}" alt="original image">
         </td>
-
         {# Result image #}
-        <td>
-        <img data="{{ img_res_bytes }}" alt="result image">
+        <td class="img-table-cell" id="res-cell">
+            {# <img src="data:image/png;base64,{{ img_res_b64 }}" alt="result image"> #}
+            <img class="img-out" src="{{ img_res_path }}" alt="resulting heatmap">
         </td>
     </tr>
-</table>
-
-<h1>{{ img_orig_bytes }}</h1>
-
-<br><br><br>
-
-<table class="legend">
+    {# Legend #}
     <tr>
-        <th>Color</th>
-        <th>Temperature</th>
+        <td class="img-table-cell"></td>
+        <td class="img-table-cell">
+            <table class="legend" id="legend">
+                <tr>
+                    <th>Color</th>
+                    <th>Temperature</th>
+                </tr>
+                {% for temp, color in legend.items() %}
+                <tr>
+                    <td class="legend-cell"><div style="width:20px;height:20px;background-color:{{ color }};"></div></td>
+                    <td class="legend-cell">{{ temp }}°C</td>
+                </tr>
+                {% endfor %}
+            </table>
+
+        </td>
     </tr>
-    {% for temp, color in legend.items() %}
-    <tr>
-        <td class="legend-cell"><div style="width:20px;height:20px;background-color:{{ color }};"></div></td>
-        <td class="legend-cell">{{ temp }}°C</td>
-    </tr>
-    {% endfor %}
 </table>
 
 <style>
-    .img-table {
-        width: 80%;
-    }
-
     .img-table-heading {
         padding: 4px 10px;
     }
 
     .img-table-cell {
-        padding: 20px 10px;
+        padding: 10px 20px;
+    }
+
+    .img-out {
+        width: 32rem;
+        height: 32rem;
     }
 
     .legend-cell {
-        padding: 4px 14px;
+        padding: 4px 30px;
     }
 </style>
 

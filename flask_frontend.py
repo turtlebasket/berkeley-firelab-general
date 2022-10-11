@@ -1,9 +1,19 @@
 from flask import Flask, render_template, request
+from werkzeug.utils import secure_filename
 import numpy as np
 from ratio_pyrometry import ratio_pyrometry_pipeline
 import base64
+import random
+import cv2 as cv
 
-app = Flask(__name__)
+app = Flask(
+    __name__, 
+    static_folder='./static',
+    static_url_path='/s/'
+)
+
+app.config['STATIC_FOLDER'] = './static'
+app.config['STATIC_URL_PATH'] = '/s'
 
 @app.route('/', methods=['GET'])
 def index():
@@ -12,6 +22,8 @@ def index():
 @app.route('/ratio_pyro', methods=['POST'])
 def ratio_pyro():
     f = request.files['file']
+    f_name = f.filename.split('.')[0]
+    f_ext = f.filename.split('.')[1]
     f_bytes = np.fromstring(f.read(), np.uint8)
     img_orig, img_res, key = ratio_pyrometry_pipeline(
         f_bytes,
@@ -23,12 +35,23 @@ def ratio_pyro():
         MIN_TEMP=float(request.form['min_temp'])
     )
 
-    img_orig_bytes = base64.urlsafe_b64encode(img_orig)
-    img_res_bytes = base64.urlsafe_b64encode(img_res)
+    # img_orig_b64 = base64.b64encode(img_orig).decode()
+    # img_res_b64 = base64.b64encode(img_res).decode()
+
+    img_orig_fname = secure_filename(f'{f_name}.{f_ext}')
+    img_res_fname = secure_filename(f'{f_name}-{hex(int(random.random() * 10000000000000000000))}.{f_ext}')
+
+    cv.imwrite(f'{app.config["STATIC_FOLDER"]}/{img_orig_fname}', img_orig)
+    cv.imwrite(f'{app.config["STATIC_FOLDER"]}/{img_res_fname}', img_res)
+
+    img_orig_path = f'{app.config["STATIC_URL_PATH"]}/{img_orig_fname}'
+    img_res_path = f'{app.config["STATIC_URL_PATH"]}/{img_res_fname}'
 
     return render_template(
         'results.jinja2',
-        img_orig_bytes=img_orig_bytes,
-        img_res_bytes=img_res_bytes,
+        img_orig_path=img_orig_path,
+        img_res_path=img_res_path,
+        # img_orig_b64=img_orig_b64,
+        # img_res_b64=img_res_b64,
         legend=key
     )
