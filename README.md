@@ -1,5 +1,19 @@
 # Pyrometry image processing
 
+## Developing the web frontend
+
+To serve in production:
+
+```
+gunicorn flask_frontend:app
+```
+
+To autoreload on source file changes:
+
+```
+gunicorn flask_frontend:app --reload
+```
+
 ## Temperature maps
 
 **Grayscale pyrometry:** currently basic; uses grayscale opencv import, then just applies a jet filter. Doesn't yet copy the full impl in the paper.
@@ -8,14 +22,14 @@
 
 **Test image:**
 
-![](01-0001.png)
+![](examples/01-0001-cropped.png)
 
-**Grayscale pyrometry result:**
-
-![](01-0001-transformed-grayscale.png)
-
-**Ratio pyrometry result (with 2x2 convolutional smoothing):**
+**Ratio pyrometry result (with convolutional smoothing):**
 
 According to general researcher consensus, ratio pyrometry is supposed to be more accurate.
 
-![](01-0001-cropped-transformed-ratio.png)
+![](examples/01-0001-cropped-transformed-ratio.png)
+
+**Grayscale pyrometry result:**
+
+![](examples/01-0001-transformed-grayscale.png)

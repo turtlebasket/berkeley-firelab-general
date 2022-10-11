@@ -4,25 +4,11 @@ import numpy as np
 from numba import jit
 import json
 
-# camera settings
-file = '01-0001.png'
-I_Darkcurrent = 150.5
-exposure_time = 0.500
-f_stop = 2.4
-ISO = 64 # basically brightness
-
-# pyrometry config
-MAX_TEMP = 1200
-MIN_TEMP = 60
-# original range from paper
-# MAX_GR_RATIO = 1200
-# MIN_GR_RATIO = 600
-
 # Cropping config
-x1 = 420
-x2 = 1200
-y1 = 400
-y2 = -1
+# x1 = 420
+# x2 = 1200
+# y1 = 400
+# y2 = -1
 
 # post-processing
 smoothing_radius = 2
@@ -32,7 +18,15 @@ key_entries = 6
 
 
 @jit(nopython=True)
-def rg_ratio_normalize(imgarr):
+def rg_ratio_normalize(
+    imgarr, 
+    I_Darkcurrent,
+    f_stop, 
+    exposure_time, 
+    ISO, 
+    MIN_TEMP, 
+    MAX_TEMP
+):
     # set max & min to most extreme values, 
     # work up & down respectively from there
     tmin = MAX_TEMP
@@ -42,8 +36,10 @@ def rg_ratio_normalize(imgarr):
     for i in range(len(imgarr)):
         for j in range(len(imgarr[i])):
             px = imgarr[i][j]
-            r_norm = normalization_func(px[0])
-            g_norm = normalization_func(px[1])
+
+            # normalize R & G pixels
+            r_norm = (px[0] - I_Darkcurrent) * (f_stop ** 2) / (ISO * exposure_time)
+            g_norm = (px[1] - I_Darkcurrent) * (f_stop ** 2) / (ISO * exposure_time)
 
             # apply camera calibration func
             temp_C = pyrometry_calibration_formula(g_norm, r_norm)
@@ -63,14 +59,6 @@ def rg_ratio_normalize(imgarr):
 
 
 @jit(nopython=True)
-def normalization_func(i):
-    """
-    does something to the pixels that i don't understand lol
-    """
-    return (i - I_Darkcurrent) * (f_stop ** 2) / (ISO * exposure_time)
-
-
-@jit(nopython=True)
 def pyrometry_calibration_formula(i_ng, i_nr):
     """
     Given the green-red ratio, calculates an approximate temperature 
@@ -84,18 +72,31 @@ def pyrometry_calibration_formula(i_ng, i_nr):
         (i_ng / i_nr) ** 3
     ) + 3753.5
 
-def ratio_pyrometry_pipeline(file):
+def ratio_pyrometry_pipeline(
+    file_bytes,
+    # camera settings
+    I_Darkcurrent: float,
+    exposure_time: float,
+    f_stop: float,
+    ISO: float,
+    # pyrometry config
+    MAX_TEMP: float,
+    MIN_TEMP: float
+):
 
     # read image & crop
-    file_name = file.split(".")[0]
-    file_ext = file.split(".")[1]
-    img = cv.imread(file)
-    img = img[y1:y2, x1:x2]
-    cv.imwrite(f'{file_name}-cropped.{file_ext}', img)
+    img_orig = cv.imdecode(file_bytes, cv.IMREAD_UNCHANGED)
+    # img = img[y1:y2, x1:x2]
 
-    # img = cv.imread('ember_test.png')
-
-    img, tmin, tmax = rg_ratio_normalize(img)
+    img, tmin, tmax = rg_ratio_normalize(
+        img_orig,
+        I_Darkcurrent,
+        f_stop,
+        exposure_time,
+        ISO,
+        MIN_TEMP,
+        MAX_TEMP
+    )
 
     # build & apply smoothing conv kernel
     k = []
@@ -107,7 +108,7 @@ def ratio_pyrometry_pipeline(file):
 
     # write colormapped image
     img_jet = cv.applyColorMap(img, cv.COLORMAP_JET)
-    cv.imwrite(f'{file_name}-cropped-transformed-ratio.{file_ext}', img_jet)
+    # cv.imwrite(f'{file_name}-cropped-transformed-ratio.{file_ext}', img_jet)
 
     # --- Generate temperature key ---
 
@@ -131,3 +132,6 @@ def ratio_pyrometry_pipeline(file):
     for i in range(len(temps)):
         c = key_img_jet[0][i]
         tempkey[temps[i]] = f"rgb({c[0]}, {c[1]}, {c[2]})"
+
+    # original, transformed, legend
+    return img_orig, img_jet, tempkey

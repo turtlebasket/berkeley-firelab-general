@@ -1,0 +1,57 @@
+{% extends "base.jinja2" %}
+{% block content %} 
+
+<table class="img-table">
+    <tr>
+        <th class="img-table-heading">Input Image</th>
+        <th class="img-table-heading">Resultant Heatmap</th>
+    </tr>
+    <tr>
+        {# Original image #}
+        <td>
+        <img data="{{ img_orig_bytes }}" alt="original image">
+        </td>
+
+        {# Result image #}
+        <td>
+        <img data="{{ img_res_bytes }}" alt="result image">
+        </td>
+    </tr>
+</table>
+
+<h1>{{ img_orig_bytes }}</h1>
+
+<br><br><br>
+
+<table class="legend">
+    <tr>
+        <th>Color</th>
+        <th>Temperature</th>
+    </tr>
+    {% for temp, color in legend.items() %}
+    <tr>
+        <td class="legend-cell"><div style="width:20px;height:20px;background-color:{{ color }};"></div></td>
+        <td class="legend-cell">{{ temp }}°C</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<style>
+    .img-table {
+        width: 80%;
+    }
+
+    .img-table-heading {
+        padding: 4px 10px;
+    }
+
+    .img-table-cell {
+        padding: 20px 10px;
+    }
+
+    .legend-cell {
+        padding: 4px 14px;
+    }
+</style>
+
+{% endblock %}

@@ -1,7 +1,38 @@
-{% extends "base.html" %}
+{% extends "base.jinja2" %}
 {% block content %} 
-    <div class="form">
-        <button onclick="">
-        </button>
-    </div>
+<form action="/ratio_pyro" method="POST" enctype="multipart/form-data">
+    <h2>Simple Ratio Pyrometry Interface</h2>
+    <input type="file" name="file" accept=".png,.jpg,.jpeg" value="Choose Image"/>
+
+    <h4>Camera Settings</h4>
+
+    <label for="iso">ISO</label>
+    <input type="number" name="iso" value="2.4"/>
+    <br>
+
+    <label for="i_darkcurrent">I_Darkcurrent</label>
+    <input type="number" name="i_darkcurrent" value="150.5"/>
+    <br>
+
+    <label for="exposure_time">Exposure Time <i>t</i></label>
+    <input type="number" name="exposure_time" value="0.5"/>
+    <br>
+    
+    <label for="f_stop">F-stop <i>f</i></label>
+    <input type="number" name="f_stop" value="2.4"/>
+    <br>
+    
+    <h4>Temperature Settings</h4>
+
+    <label for="min_temp">Min Temp (°C)</label>
+    <input type="number" name="min_temp" value="60"/>
+    <br>
+
+    <label for="max_temp">Max Temp (°C)</label>
+    <input type="number" name="max_temp" value="1200"/>
+    <br>
+
+    <br>
+    <input type="submit" value="Generate Heatmap"/>
+</form>
 {% endblock %} 
