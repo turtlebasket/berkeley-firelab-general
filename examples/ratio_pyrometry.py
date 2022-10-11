@@ -84,50 +84,55 @@ def pyrometry_calibration_formula(i_ng, i_nr):
         (i_ng / i_nr) ** 3
     ) + 3753.5
 
-def ratio_pyrometry_pipeline(file):
 
-    # read image & crop
-    file_name = file.split(".")[0]
-    file_ext = file.split(".")[1]
-    img = cv.imread(file)
-    img = img[y1:y2, x1:x2]
-    cv.imwrite(f'{file_name}-cropped.{file_ext}', img)
+# read image & crop
+file_name = file.split(".")[0]
+file_ext = file.split(".")[1]
+img = cv.imread(file)
+img = img[y1:y2, x1:x2]
+cv.imwrite(f'{file_name}-cropped.{file_ext}', img)
 
-    # img = cv.imread('ember_test.png')
+# img = cv.imread('ember_test.png')
 
-    img, tmin, tmax = rg_ratio_normalize(img)
+img, tmin, tmax = rg_ratio_normalize(img)
 
-    # build & apply smoothing conv kernel
-    k = []
-    for i in range(smoothing_radius):
-        k.append([1/(smoothing_radius**2) for i in range(smoothing_radius)])
-    kernel = np.array(k)
+print(f"min: {tmin}°C")
+print(f"max: {tmax}°C")
 
-    img = cv.filter2D(src=img, ddepth=-1, kernel=kernel)
+# build & apply smoothing conv kernel
+k = []
+for i in range(smoothing_radius):
+    k.append([1/(smoothing_radius**2) for i in range(smoothing_radius)])
+kernel = np.array(k)
 
-    # write colormapped image
-    img_jet = cv.applyColorMap(img, cv.COLORMAP_JET)
-    cv.imwrite(f'{file_name}-cropped-transformed-ratio.{file_ext}', img_jet)
+img = cv.filter2D(src=img, ddepth=-1, kernel=kernel)
 
-    # --- Generate temperature key ---
+# write colormapped image
+img_jet = cv.applyColorMap(img, cv.COLORMAP_JET)
+cv.imwrite(f'{file_name}-cropped-transformed-ratio.{file_ext}', img_jet)
 
-    # adjust max & min temps to be the same as the image
-    # tmin_adj = tmin / (smoothing_radius ** 2)
-    # tmax_adj = tmax / (smoothing_radius ** 2)
-    # Generate 6-step key
-    step = (tmax - tmin) / (key_entries-1)
-    temps = []
-    key_img_arr = [[]]
-    for i in range(key_entries):
-        res_temp = tmin + (i * step)
-        res_color = (tmax - (i * step)) / MAX_TEMP * 255
-        temps.append(res_temp)
-        key_img_arr[0].append([res_color, res_color, res_color])
+# --- Generate temperature key ---
 
-    key_img = np.array(key_img_arr).astype(np.uint8)
-    key_img_jet = cv.applyColorMap(key_img, cv.COLORMAP_JET)
+# adjust max & min temps to be the same as the image
+# tmin_adj = tmin / (smoothing_radius ** 2)
+# tmax_adj = tmax / (smoothing_radius ** 2)
+# Generate 6-step key
+step = (tmax - tmin) / (key_entries-1)
+temps = []
+key_img_arr = [[]]
+for i in range(key_entries):
+    res_temp = tmin + (i * step)
+    res_color = (tmax - (i * step)) / MAX_TEMP * 255
+    temps.append(res_temp)
+    key_img_arr[0].append([res_color, res_color, res_color])
 
-    tempkey = {}
-    for i in range(len(temps)):
-        c = key_img_jet[0][i]
-        tempkey[temps[i]] = f"rgb({c[0]}, {c[1]}, {c[2]})"
+key_img = np.array(key_img_arr).astype(np.uint8)
+key_img_jet = cv.applyColorMap(key_img, cv.COLORMAP_JET)
+# cv.imwrite(f'{file_name}-key.{file_ext}', key_img_jet)
+
+tempkey = {}
+for i in range(len(temps)):
+    c = key_img_jet[0][i]
+    tempkey[temps[i]] = f"rgb({c[0]}, {c[1]}, {c[2]})"
+
+print(json.dumps(tempkey, indent=4))

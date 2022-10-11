@@ -6,6 +6,9 @@ name = "pypi"
 [packages]
 opencv-python = "*"
 numba = "*"
+flask = "*"
+gunicorn = "*"
+werkzeug = "*"
 
 [dev-packages]
 
