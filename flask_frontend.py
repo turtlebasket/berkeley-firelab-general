@@ -22,8 +22,6 @@ def index():
 @app.route('/ratio_pyro', methods=['POST'])
 def ratio_pyro():
     f = request.files['file']
-    f_name = f.filename.split('.')[0]
-    f_ext = f.filename.split('.')[1]
     f_bytes = np.fromstring(f.read(), np.uint8)
     img_orig, img_res, key = ratio_pyrometry_pipeline(
         f_bytes,
@@ -37,17 +35,6 @@ def ratio_pyro():
 
     img_orig_b64 = base64.b64encode(cv.imencode('.png', img_orig)[1]).decode(encoding='utf-8')
     img_res_b64 = base64.b64encode(cv.imencode('.png', img_res)[1]).decode(encoding='utf-8')
-
-    # img_res_b64 = base64.b64encode(img_res).decode()
-
-    # img_orig_fname = secure_filename(f'{f_name}.{f_ext}')
-    # img_res_fname = secure_filename(f'{f_name}-{hex(int(random.random() * 10000000000000000000))}.{f_ext}')
-
-    # cv.imwrite(f'{app.config["STATIC_FOLDER"]}/{img_orig_fname}', img_orig)
-    # cv.imwrite(f'{app.config["STATIC_FOLDER"]}/{img_res_fname}', img_res)
-
-    # img_orig_path = f'{app.config["STATIC_URL_PATH"]}/{img_orig_fname}'
-    # img_res_path = f'{app.config["STATIC_URL_PATH"]}/{img_res_fname}'
 
     return render_template(
         'results.jinja2',
