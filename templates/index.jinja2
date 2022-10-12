@@ -2,7 +2,11 @@
 {% block content %} 
 <form action="/ratio_pyro" method="POST" enctype="multipart/form-data">
     <h2>Simple Ratio Pyrometry Interface</h2>
-    <input type="file" name="file" accept=".png,.jpg,.jpeg" value="Choose Image"/>
+
+    <img src="#" id="img-preview" type="file"/>
+    <br>
+
+    <input id="img-upload" type="file" name="file" accept=".png,.jpg,.jpeg" value="Choose Image"/>
 
     <h4>Camera Settings</h4>
 
@@ -35,4 +39,24 @@
     <br>
     <input type="submit" value="Generate Heatmap"/>
 </form>
+
+<script>
+let imgPreview = document.getElementById('img-preview');
+let imgUpload = document.getElementById('img-upload');
+imgUpload.onchange = event => {
+    console.log("hi")
+    const [file] = imgUpload.files;
+    if (file) {
+        console.log(file)
+        imgPreview.src = URL.createObjectURL(file);
+    }
+};
+</script>
+
+<style>
+#img-preview {
+    width: 18rem;
+}
+</style>
+
 {% endblock %} 
