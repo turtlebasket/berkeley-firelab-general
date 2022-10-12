@@ -9,13 +9,13 @@
     <tr>
         {# Original image #}
         <td class="img-table-cell" id="orig-cell">
-            {# <img src="data:image/png;base64,{{ img_orig_b64 }}" alt="original image"> #}
-            <img class="img-out" src="{{ img_orig_path }}" alt="original image">
+            <img class="img-out" src="data:image/png;base64,{{ img_orig_b64 }}" alt="original image">
+            {# <img class="img-out" src="{{ img_orig_path }}" alt="original image"> #}
         </td>
         {# Result image #}
         <td class="img-table-cell" id="res-cell">
-            {# <img src="data:image/png;base64,{{ img_res_b64 }}" alt="result image"> #}
-            <img class="img-out" src="{{ img_res_path }}" alt="resulting heatmap">
+            <img class="img-out" src="data:image/png;base64,{{ img_res_b64 }}" alt="result image">
+            {# <img class="img-out" src="{{ img_res_path }}" alt="resulting heatmap"> #}
         </td>
     </tr>
     {# Legend #}

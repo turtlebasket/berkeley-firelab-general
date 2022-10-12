@@ -35,23 +35,25 @@ def ratio_pyro():
         MIN_TEMP=float(request.form['min_temp'])
     )
 
-    # img_orig_b64 = base64.b64encode(img_orig).decode()
+    img_orig_b64 = base64.b64encode(cv.imencode('.png', img_orig)[1]).decode(encoding='utf-8')
+    img_res_b64 = base64.b64encode(cv.imencode('.png', img_res)[1]).decode(encoding='utf-8')
+
     # img_res_b64 = base64.b64encode(img_res).decode()
 
-    img_orig_fname = secure_filename(f'{f_name}.{f_ext}')
-    img_res_fname = secure_filename(f'{f_name}-{hex(int(random.random() * 10000000000000000000))}.{f_ext}')
+    # img_orig_fname = secure_filename(f'{f_name}.{f_ext}')
+    # img_res_fname = secure_filename(f'{f_name}-{hex(int(random.random() * 10000000000000000000))}.{f_ext}')
 
-    cv.imwrite(f'{app.config["STATIC_FOLDER"]}/{img_orig_fname}', img_orig)
-    cv.imwrite(f'{app.config["STATIC_FOLDER"]}/{img_res_fname}', img_res)
+    # cv.imwrite(f'{app.config["STATIC_FOLDER"]}/{img_orig_fname}', img_orig)
+    # cv.imwrite(f'{app.config["STATIC_FOLDER"]}/{img_res_fname}', img_res)
 
-    img_orig_path = f'{app.config["STATIC_URL_PATH"]}/{img_orig_fname}'
-    img_res_path = f'{app.config["STATIC_URL_PATH"]}/{img_res_fname}'
+    # img_orig_path = f'{app.config["STATIC_URL_PATH"]}/{img_orig_fname}'
+    # img_res_path = f'{app.config["STATIC_URL_PATH"]}/{img_res_fname}'
 
     return render_template(
         'results.jinja2',
-        img_orig_path=img_orig_path,
-        img_res_path=img_res_path,
-        # img_orig_b64=img_orig_b64,
-        # img_res_b64=img_res_b64,
+        # img_orig_path=img_orig_path,
+        # img_res_path=img_res_path,
+        img_orig_b64=img_orig_b64,
+        img_res_b64=img_res_b64,
         legend=key
     )
