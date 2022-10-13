@@ -36,8 +36,6 @@ def ratio_pyro():
 
     return render_template(
         'results.jinja2',
-        # img_orig_path=img_orig_path,
-        # img_res_path=img_res_path,
         img_orig_b64=img_orig_b64,
         img_res_b64=img_res_b64,
         legend=key
