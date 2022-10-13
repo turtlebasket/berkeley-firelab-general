@@ -3,7 +3,6 @@ from werkzeug.utils import secure_filename
 import numpy as np
 from ratio_pyrometry import ratio_pyrometry_pipeline
 import base64
-import random
 import cv2 as cv
 
 app = Flask(
@@ -11,9 +10,6 @@ app = Flask(
     static_folder='./static',
     static_url_path='/s/'
 )
-
-app.config['STATIC_FOLDER'] = './static'
-app.config['STATIC_URL_PATH'] = '/s'
 
 @app.route('/', methods=['GET'])
 def index():
@@ -30,7 +26,9 @@ def ratio_pyro():
         exposure_time=float(request.form['exposure_time']),
         f_stop=float(request.form['f_stop']),
         MAX_TEMP=float(request.form['max_temp']),
-        MIN_TEMP=float(request.form['min_temp'])
+        MIN_TEMP=float(request.form['min_temp']),
+        smoothing_radius=int(request.form['smoothing_radius']),
+        key_entries=int(request.form['legend_entries'])
     )
 
     img_orig_b64 = base64.b64encode(cv.imencode('.png', img_orig)[1]).decode(encoding='utf-8')

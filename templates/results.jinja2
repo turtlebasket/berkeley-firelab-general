@@ -10,12 +10,10 @@
         {# Original image #}
         <td class="img-table-cell" id="orig-cell">
             <img class="img-out" src="data:image/png;base64,{{ img_orig_b64 }}" alt="original image">
-            {# <img class="img-out" src="{{ img_orig_path }}" alt="original image"> #}
         </td>
         {# Result image #}
         <td class="img-table-cell" id="res-cell">
             <img class="img-out" src="data:image/png;base64,{{ img_res_b64 }}" alt="result image">
-            {# <img class="img-out" src="{{ img_res_path }}" alt="resulting heatmap"> #}
         </td>
     </tr>
     {# Legend #}
@@ -24,17 +22,16 @@
         <td class="img-table-cell">
             <table class="legend" id="legend">
                 <tr>
-                    <th>Color</th>
-                    <th>Temperature</th>
+                    <th class="legend-heading">Color</th>
+                    <th class="legend-heading">Temperature</th>
                 </tr>
                 {% for temp, color in legend.items() %}
                 <tr>
-                    <td class="legend-cell"><div style="width:20px;height:20px;background-color:{{ color }};"></div></td>
+                    <td class="legend-cell"><div style="width:30px;height:20px;background-color:{{ color }};"></div></td>
                     <td class="legend-cell">{{ temp }}°C</td>
                 </tr>
                 {% endfor %}
             </table>
-
         </td>
     </tr>
 </table>
@@ -52,8 +49,18 @@
         width: 32rem;
     }
 
+    .legend {
+        border-spacing: 0px;
+        border-collapse: collapse;
+    }
+
+    .legend-heading {
+        padding: 4px;
+    }
+
     .legend-cell {
-        padding: 4px 30px;
+        border-width: 0px;
+        padding: 0px 20px;
     }
 </style>
 

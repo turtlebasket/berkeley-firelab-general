@@ -15,15 +15,15 @@
     <br>
 
     <label for="i_darkcurrent">I_Darkcurrent</label>
-    <input type="number" name="i_darkcurrent" value="150.5"/>
+    <input type="number" name="i_darkcurrent" value="150.5" step="0.1"/>
     <br>
 
     <label for="exposure_time">Exposure Time <i>t</i></label>
-    <input type="number" name="exposure_time" value="0.5"/>
+    <input type="number" name="exposure_time" value="0.5" step="0.1"/>
     <br>
     
     <label for="f_stop">F-stop <i>f</i></label>
-    <input type="number" name="f_stop" value="2.4"/>
+    <input type="number" name="f_stop" value="2.4" step=0.1/>
     <br>
     
     <h4>Temperature Settings</h4>
@@ -34,6 +34,16 @@
 
     <label for="max_temp">Max Temp (°C)</label>
     <input type="number" name="max_temp" value="1200"/>
+    <br>
+
+    <h4>Output Settings</h4>
+
+    <label for="smoothing_radius">Smoothing Radius (px)</label>
+    <input type="number" name="smoothing_radius" value="2"/>
+    <br>
+
+    <label for="legend_entries">Legend Entries</label>
+    <input type="number" name="legend_entries" value="20"/>
     <br>
 
     <br>

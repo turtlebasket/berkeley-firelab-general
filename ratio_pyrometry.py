@@ -70,7 +70,9 @@ def ratio_pyrometry_pipeline(
     ISO: float,
     # pyrometry config
     MAX_TEMP: float,
-    MIN_TEMP: float
+    MIN_TEMP: float,
+    smoothing_radius: int,
+    key_entries: int
 ):
 
     # read image & crop
