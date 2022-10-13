@@ -43,7 +43,6 @@ def rg_ratio_normalize(
                 tmax = temp_C
 
             # min intensity = 0
-            print(temp_C)
             pix_i = temp_C - MIN_TEMP 
 
             imgnew[i][j] = [pix_i, pix_i, pix_i]
