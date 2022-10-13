@@ -79,9 +79,9 @@ def pyrometry_calibration_formula(i_ng, i_nr):
     return 362.73 * math.log10(
         (i_ng/i_nr) ** 3
     ) + 2186.7 * math.log10(
-        (i_ng/i_nr) ** 3
+        (i_ng/i_nr) ** 2
     ) + 4466.5 * math.log10(
-        (i_ng / i_nr) ** 3
+        (i_ng / i_nr)
     ) + 3753.5
 
 

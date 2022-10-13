@@ -4,19 +4,6 @@ import numpy as np
 from numba import jit
 import json
 
-# Cropping config
-# x1 = 420
-# x2 = 1200
-# y1 = 400
-# y2 = -1
-
-# post-processing
-smoothing_radius = 2
-
-# temperature key generation
-key_entries = 6
-
-
 @jit(nopython=True)
 def rg_ratio_normalize(
     imgarr, 
@@ -54,6 +41,8 @@ def rg_ratio_normalize(
             if temp_C > tmax:
                 tmax = temp_C
 
+            temp_C -= MIN_TEMP
+
             imgnew[i][j] = [temp_C, temp_C, temp_C]
     return imgnew, tmin, tmax
 
@@ -67,9 +56,9 @@ def pyrometry_calibration_formula(i_ng, i_nr):
     return 362.73 * math.log10(
         (i_ng/i_nr) ** 3
     ) + 2186.7 * math.log10(
-        (i_ng/i_nr) ** 3
+        (i_ng/i_nr) ** 2
     ) + 4466.5 * math.log10(
-        (i_ng / i_nr) ** 3
+        (i_ng / i_nr)
     ) + 3753.5
 
 def ratio_pyrometry_pipeline(
