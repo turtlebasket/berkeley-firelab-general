@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request
-from werkzeug.utils import secure_filename
 import numpy as np
 from ratio_pyrometry import ratio_pyrometry_pipeline
 import base64
