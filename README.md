@@ -1,5 +1,11 @@
 # Pyrometry image processing
 
+## Interface Screenshots
+
+| Input View | Results | 
+| --- | --- |
+| ![](screenshots/pyro_input.png) | ![](screenshots/pyro_results.png)
+
 ## Developing the web frontend
 
 To serve in production:
