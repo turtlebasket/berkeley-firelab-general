@@ -1,13 +1,18 @@
-# R & G values taken from images
 import math
 
+# R & G values taken from images
+# white_hot = (255, 255)
+# hi = (168, 55)
+# med = (146, 26)
+# low = (25, 4)
+# custom = (156, 20)
 
-# Values
-white_hot = (255, 255)
-hi = (168, 55)
-med = (146, 26)
-low = (25, 4)
-
+# firebrand_test
+rg_values = [
+    (219, 7),
+    (227, 14),
+    (166, 14),
+]
 
 # Settings
 I_Darkcurrent = 7.7
@@ -21,13 +26,12 @@ def pyrometry_calibration_formula(i_ng, i_nr):
     in Celsius. 
     """
     try:
-        return 362.73 * math.log10(
-            (i_ng/i_nr) ** 3
-        ) + 2186.7 * math.log10(
-            (i_ng/i_nr) ** 2
-        ) + 4466.5 * math.log10(
-            (i_ng / i_nr)
-        ) + 3753.5
+        return (
+            362.73 * math.log10(i_ng/i_nr) ** 3 +
+            2186.7 * math.log10(i_ng/i_nr) ** 2 +
+            4466.5 * math.log10(i_ng / i_nr) +
+            3753.5
+        )
         # return 362.73 * math.log10(
         #     (i_ng/i_nr) ** 3
         # ) + 2186.7 * math.log10(
@@ -55,13 +59,17 @@ def grtemp(px):
         round(px[0] / px[1], 2),
         round(r_norm, 2),
         round(g_norm, 2),
-        round(r_norm / g_norm),
+        round(g_norm / r_norm, 4),
         res, 
     )
 
-
 tprint('RED', 'GREEN', 'RATIO', 'RNORM', 'GNORM', 'NRATIO', 'RES TEMP')
-grtemp(white_hot)
-grtemp(hi)
-grtemp(med)
-grtemp(low)
+
+for val in rg_values:
+    grtemp(val)
+
+# grtemp(white_hot)
+# grtemp(hi)
+# grtemp(med)
+# grtemp(low)
+# grtemp(custom)

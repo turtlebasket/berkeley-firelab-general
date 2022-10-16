@@ -45,6 +45,9 @@ def rg_ratio_normalize(
             # min intensity = 0
             pix_i = temp_C - MIN_TEMP 
 
+            # temp_new = temp_C - MIN_TEMP 
+            # pix_i = temp_new / MAX_TEMP * 255
+
             imgnew[i][j] = [pix_i, pix_i, pix_i]
 
             # imgnew[i][j] = [0, g_norm, r_norm]
@@ -60,13 +63,12 @@ def pyrometry_calibration_formula(i_ng, i_nr, default=24.0):
     in Celsius. Defaults to room temperature if there's an error.
     """
     try:
-        return 362.73 * math.log10(
-            (i_ng/i_nr) ** 3
-        ) + 2186.7 * math.log10(
-            (i_ng/i_nr) ** 2
-        ) + 4466.5 * math.log10(
-            (i_ng / i_nr)
-        ) + 3753.5
+        return (
+            362.73 * math.log10(i_ng/i_nr) ** 3 +
+            2186.7 * math.log10(i_ng/i_nr) ** 2 +
+            4466.5 * math.log10(i_ng / i_nr) +
+            3753.5
+        )
     except:
         return default
 
