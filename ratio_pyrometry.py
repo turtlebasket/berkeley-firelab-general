@@ -1,4 +1,5 @@
 import math
+from multiprocessing.sharedctypes import Value
 import cv2 as cv
 import numpy as np
 from numba import jit
@@ -33,8 +34,8 @@ def rg_ratio_normalize(
             temp_C = pyrometry_calibration_formula(g_norm, r_norm, default=MIN_TEMP) 
 
             # remove pixels outside calibration range
-            if (MAX_TEMP != None and temp_C > MAX_TEMP) or (MIN_TEMP != None and temp_C < MIN_TEMP):
-                temp_C = MIN_TEMP 
+            if (MIN_TEMP != None and temp_C < MIN_TEMP) or (MAX_TEMP != None and temp_C > MAX_TEMP):
+                temp_C = MIN_TEMP
 
             # update min & max
             if temp_C < tmin and temp_C >= 0:
@@ -43,15 +44,12 @@ def rg_ratio_normalize(
                 tmax = temp_C
 
             # min intensity = 0
-            pix_i = temp_C - MIN_TEMP 
+            # pix_i = temp_C - MIN_TEMP 
 
-            # temp_new = temp_C - MIN_TEMP 
-            # pix_i = temp_new / MAX_TEMP * 255
+            temp_new = temp_C - MIN_TEMP 
+            pix_i = temp_new / MAX_TEMP * 255
 
             imgnew[i][j] = [pix_i, pix_i, pix_i]
-
-            # imgnew[i][j] = [0, g_norm, r_norm]
-
 
     return imgnew, tmin, tmax
 
@@ -64,9 +62,9 @@ def pyrometry_calibration_formula(i_ng, i_nr, default=24.0):
     """
     try:
         return (
-            362.73 * math.log10(i_ng/i_nr) ** 3 +
-            2186.7 * math.log10(i_ng/i_nr) ** 2 +
-            4466.5 * math.log10(i_ng / i_nr) +
+            (362.73 * math.log10(i_ng / i_nr) ** 3) +
+            (2186.7 * math.log10(i_ng / i_nr) ** 2) +
+            (4466.5 * math.log10(i_ng / i_nr)) +
             3753.5
         )
     except:
@@ -109,6 +107,7 @@ def ratio_pyrometry_pipeline(
     img = cv.filter2D(src=img, ddepth=-1, kernel=kernel)
 
     # write colormapped image
+    # img_jet = img
     img_jet = cv.applyColorMap(img, cv.COLORMAP_JET)
 
     # --- Generate temperature key ---
