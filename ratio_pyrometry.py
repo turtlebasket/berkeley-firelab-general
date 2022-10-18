@@ -14,11 +14,6 @@ def rg_ratio_normalize(
     MIN_TEMP, 
     MAX_TEMP
 ):
-    # set max & min to most extreme values, 
-    # work up & down respectively from there
-    tmin = MAX_TEMP
-    tmax = 0
-
     # copy image into new array & chop off alpha values (if applicable)
     imgnew = imgarr.copy()[:,:,:3]
 
@@ -37,12 +32,6 @@ def rg_ratio_normalize(
             if (MIN_TEMP != None and temp_C < MIN_TEMP) or (MAX_TEMP != None and temp_C > MAX_TEMP):
                 temp_C = MIN_TEMP
 
-            # update min & max
-            if temp_C < tmin and temp_C >= 0:
-                tmin = temp_C
-            if temp_C > tmax:
-                tmax = temp_C
-
             # min intensity = 0
             # pix_i = temp_C - MIN_TEMP 
 
@@ -51,7 +40,7 @@ def rg_ratio_normalize(
 
             imgnew[i][j] = [pix_i, pix_i, pix_i]
 
-    return imgnew, tmin, tmax
+    return imgnew
 
 
 @jit(nopython=True)
@@ -88,7 +77,7 @@ def ratio_pyrometry_pipeline(
     img_orig = cv.imdecode(file_bytes, cv.IMREAD_UNCHANGED)
     # img = img[y1:y2, x1:x2]
 
-    img, tmin, tmax = rg_ratio_normalize(
+    img = rg_ratio_normalize(
         img_orig,
         I_Darkcurrent,
         f_stop,
