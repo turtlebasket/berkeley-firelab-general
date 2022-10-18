@@ -1,18 +1,37 @@
 import math
 
-# R & G values taken from images
-# white_hot = (255, 255)
-# hi = (168, 55)
-# med = (146, 26)
-# low = (25, 4)
-# custom = (156, 20)
+rg_value_sets = {
+    "firebrand_test.png": [
+        (219, 7),
+        (227, 14),
+        (166, 14),
+        (197, 10),
+        (230, 25),
+        (228, 17),
+        (218, 17),
+        (221, 15),
+        (210, 22),
+        (229, 17),
+    ],
 
-# firebrand_test
-rg_values = [
-    (219, 7),
-    (227, 14),
-    (166, 14),
-]
+    "streaktest.png": [
+        (50, 11),
+        (51, 12),
+        (52, 10),
+        (240, 115),
+        (254, 127),
+    ],
+
+    "ember_orange.png": [
+        (240, 147),
+        (235, 102),
+        (223, 103),
+        (232, 103),
+        (103, 34),
+        (128, 47),
+        (92, 27),
+    ]
+}
 
 # Settings
 I_Darkcurrent = 7.7
@@ -56,17 +75,18 @@ def grtemp(px):
     tprint(
         px[0], 
         px[1], 
-        round(px[0] / px[1], 2),
+        # round(px[0] / px[1], 2),
         round(r_norm, 2),
         round(g_norm, 2),
         round(g_norm / r_norm, 4),
         res, 
     )
 
-tprint('RED', 'GREEN', 'RATIO', 'RNORM', 'GNORM', 'NRATIO', 'RES TEMP')
-
-for val in rg_values:
-    grtemp(val)
+for (key, val) in rg_value_sets.items():
+    print(f"\n{key}\n")
+    tprint('RED', 'GREEN', 'RNORM', 'GNORM', 'G_n/R_n', 'RES TEMP')
+    for rg in val:
+        grtemp(rg)
 
 # grtemp(white_hot)
 # grtemp(hi)
