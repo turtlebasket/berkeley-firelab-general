@@ -15,15 +15,15 @@
     <br>
 
     <label for="i_darkcurrent">I_Darkcurrent</label>
-    <input type="number" name="i_darkcurrent" value="7.7" step="0.1"/>
+    <input type="number" name="i_darkcurrent" value="7.7" step="0.001"/>
     <br>
 
     <label for="exposure_time">Exposure Time <i>t</i></label>
-    <input type="number" name="exposure_time" value="0.5" step="0.1"/>
+    <input type="number" name="exposure_time" value="0.5" step="0.001"/>
     <br>
 
     <label for="f_stop">F-stop <i>f</i></label>
-    <input type="number" name="f_stop" value="2.4" step=0.1/>
+    <input type="number" name="f_stop" value="2.4" step="0.001"/>
     <br>
 
     <h4>Temperature Settings</h4>
@@ -54,7 +54,6 @@
 let imgPreview = document.getElementById('img-preview');
 let imgUpload = document.getElementById('img-upload');
 imgUpload.onchange = event => {
-    console.log("hi")
     const [file] = imgUpload.files;
     if (file) {
         console.log(file)
