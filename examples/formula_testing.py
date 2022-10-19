@@ -51,13 +51,6 @@ def pyrometry_calibration_formula(i_ng, i_nr):
             4466.5 * math.log10(i_ng / i_nr) +
             3753.5
         )
-        # return 362.73 * math.log10(
-        #     (i_ng/i_nr) ** 3
-        # ) + 2186.7 * math.log10(
-        #     (i_ng/i_nr) ** 2
-        # ) + 4466.5 * math.log10(
-        #     (i_ng / i_nr)
-        # ) + 3753.5
     except:
         return 'dropped'
 
@@ -87,9 +80,3 @@ for (key, val) in rg_value_sets.items():
     tprint('RED', 'GREEN', 'RNORM', 'GNORM', 'G_n/R_n', 'RES TEMP')
     for rg in val:
         grtemp(rg)
-
-# grtemp(white_hot)
-# grtemp(hi)
-# grtemp(med)
-# grtemp(low)
-# grtemp(custom)
