@@ -36,7 +36,7 @@ def rg_ratio_normalize(
             # pix_i = temp_C - MIN_TEMP 
 
             temp_new = temp_C - MIN_TEMP 
-            pix_i = temp_new / MAX_TEMP * 255
+            pix_i = temp_new / (MAX_TEMP - MIN_TEMP) * 255
 
             imgnew[i][j] = [pix_i, pix_i, pix_i]
 
@@ -101,16 +101,13 @@ def ratio_pyrometry_pipeline(
 
     # --- Generate temperature key ---
 
-    # adjust max & min temps to be the same as the image
     # Generate key
-    # step = (tmax - tmin) / (key_entries-1)
     step = (MAX_TEMP - MIN_TEMP) / (key_entries-1)
     temps = []
     key_img_arr = [[]]
     for i in range(key_entries):
-        # res_temp = tmin + (i * step)
         res_temp = MIN_TEMP + (i * step)
-        res_color = res_temp / MAX_TEMP * 255
+        res_color = (res_temp - MIN_TEMP) / (MAX_TEMP - MIN_TEMP) * 255
         temps.append(math.floor(res_temp))
         key_img_arr[0].append([res_color, res_color, res_color])
 
