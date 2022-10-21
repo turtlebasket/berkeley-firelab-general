@@ -29,11 +29,19 @@
     <h4>Temperature Settings</h4>
 
     <label for="min_temp">Min Temp (°C)</label>
-    <input type="number" name="min_temp" value="60"/>
+    <input type="number" name="min_temp" value="600"/>
     <br>
 
     <label for="max_temp">Max Temp (°C)</label>
     <input type="number" name="max_temp" value="1200"/>
+    <br>
+
+    <h4>Pyrometry Equation Settings</h4>
+
+    <img src="/s/pyrometry_eqn.png" id="pyro-eqn" alt="pyrometry calibration formula">
+    <br>
+    <label for="equation_scaling_factor">Equation scaling factor (1 default, 0.55 recommended)</label>
+    <input type="number" name="equation_scaling_factor" value="0.55" step="0.001"/>
     <br>
 
     <h4>Output Settings</h4>
@@ -65,6 +73,9 @@ imgUpload.onchange = event => {
 <style>
 #img-preview {
     width: 18rem;
+}
+#pyro-eqn {
+    width: 800px;
 }
 </style>
 

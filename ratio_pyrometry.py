@@ -12,7 +12,8 @@ def rg_ratio_normalize(
     exposure_time, 
     ISO, 
     MIN_TEMP, 
-    MAX_TEMP
+    MAX_TEMP,
+    eqn_scaling_factor
 ):
     # copy image into new array & chop off alpha values (if applicable)
     imgnew = imgarr.copy()[:,:,:3]
@@ -26,18 +27,14 @@ def rg_ratio_normalize(
             r_norm = (px[2] - I_Darkcurrent) * (f_stop ** 2) / (ISO * exposure_time)
 
             # apply camera calibration func
-            temp_C = pyrometry_calibration_formula(g_norm, r_norm, default=MIN_TEMP) 
+            temp_C = pyrometry_calibration_formula(g_norm, r_norm, default=MIN_TEMP) * eqn_scaling_factor
 
             # remove pixels outside calibration range
             if (MIN_TEMP != None and temp_C < MIN_TEMP) or (MAX_TEMP != None and temp_C > MAX_TEMP):
                 temp_C = MIN_TEMP
 
-            # min intensity = 0
-            # pix_i = temp_C - MIN_TEMP 
-
-            temp_new = temp_C - MIN_TEMP 
-            pix_i = temp_new / (MAX_TEMP - MIN_TEMP) * 255
-
+            # scale light intensity to calculated temperature
+            pix_i = scale_temp(temp_C, MIN_TEMP, MAX_TEMP)
             imgnew[i][j] = [pix_i, pix_i, pix_i]
 
     return imgnew
@@ -59,6 +56,15 @@ def pyrometry_calibration_formula(i_ng, i_nr, default=24.0):
     except:
         return default
 
+
+@jit(nopython=True)
+def scale_temp(t, min, max):
+    """
+    Scale pixel temperature (t) to light intensity given min & max temp.
+    """
+    return (t - min) / (max - min) * 255
+
+
 def ratio_pyrometry_pipeline(
     file_bytes,
     # camera settings
@@ -70,12 +76,12 @@ def ratio_pyrometry_pipeline(
     MAX_TEMP: float,
     MIN_TEMP: float,
     smoothing_radius: int,
-    key_entries: int
+    key_entries: int,
+    eqn_scaling_factor: float,
 ):
 
     # read image & crop
     img_orig = cv.imdecode(file_bytes, cv.IMREAD_UNCHANGED)
-    # img = img[y1:y2, x1:x2]
 
     img = rg_ratio_normalize(
         img_orig,
@@ -84,7 +90,8 @@ def ratio_pyrometry_pipeline(
         exposure_time,
         ISO,
         MIN_TEMP,
-        MAX_TEMP
+        MAX_TEMP,
+        eqn_scaling_factor
     )
 
     # build & apply smoothing conv kernel
@@ -107,7 +114,7 @@ def ratio_pyrometry_pipeline(
     key_img_arr = [[]]
     for i in range(key_entries):
         res_temp = MIN_TEMP + (i * step)
-        res_color = (res_temp - MIN_TEMP) / (MAX_TEMP - MIN_TEMP) * 255
+        res_color = scale_temp(res_temp, MIN_TEMP, MAX_TEMP)
         temps.append(math.floor(res_temp))
         key_img_arr[0].append([res_color, res_color, res_color])
 

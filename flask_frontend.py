@@ -6,7 +6,7 @@ import cv2 as cv
 
 app = Flask(
     __name__, 
-    static_folder='./static',
+    static_folder='static',
     static_url_path='/s/'
 )
 
@@ -27,7 +27,8 @@ def ratio_pyro():
         MAX_TEMP=float(request.form['max_temp']),
         MIN_TEMP=float(request.form['min_temp']),
         smoothing_radius=int(request.form['smoothing_radius']),
-        key_entries=int(request.form['legend_entries'])
+        key_entries=int(request.form['legend_entries']),
+        eqn_scaling_factor=float(request.form['equation_scaling_factor'])
     )
 
     img_orig_b64 = base64.b64encode(cv.imencode('.png', img_orig)[1]).decode(encoding='utf-8')
