@@ -1,0 +1,14 @@
+---
+# camera settings
+iso: 64
+i-darkcurrent: 7.7
+exposure-time: 0.5
+f-stop: 2.4
+
+# pyrometry settings
+min-temp: 600
+max-temp: 1200
+scaling-factor: 0.55
+
+# output settings
+smoothing-radius: 2

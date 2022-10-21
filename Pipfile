@@ -9,6 +9,7 @@ numba = "*"
 flask = "*"
 gunicorn = "*"
 werkzeug = "*"
+pyyaml = "*"
 
 [dev-packages]
 

@@ -103,7 +103,6 @@ def ratio_pyrometry_pipeline(
     img = cv.filter2D(src=img, ddepth=-1, kernel=kernel)
 
     # write colormapped image
-    # img_jet = img
     img_jet = cv.applyColorMap(img, cv.COLORMAP_JET)
 
     # --- Generate temperature key ---
