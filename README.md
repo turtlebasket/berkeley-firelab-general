@@ -2,9 +2,9 @@
 
 ## Interface Screenshots
 
-| Input View | Results | 
-| --- | --- |
-| ![](screenshots/pyro_input.png) | ![](screenshots/pyro_results.png)
+| Input View | Results | Temp. Distribution | 
+| --- | --- | --- |
+| ![](screenshots/pyro_input.png) | ![](screenshots/pyro_results.png) | ![](screenshots/temp_dist_plot.png) 
 
 ## Using the web version 
 
