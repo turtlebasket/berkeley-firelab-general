@@ -40,7 +40,7 @@ def ratio_pyro():
     # generate prob. distribution histogram & return embed
     fig = ff.create_distplot(
         [ptemps], 
-        group_labels=[f.name], 
+        group_labels=[f.filename], 
         show_rug=False,
         show_hist=False,
     )
@@ -52,7 +52,7 @@ def ratio_pyro():
     fig.update_xaxes(
         title_text="Temperature (°C)",
     )
-    fig.update_xaxes(
+    fig.update_yaxes(
         title_text="Probability (1/°C)",
     )
     freq_plot = fig.to_html()
