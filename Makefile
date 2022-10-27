@@ -10,3 +10,7 @@ dev:
 clean:
 	rm -rf static/*
 	touch static/.gitkeep
+
+batch:
+	pipenv run python3 batch-process.py
+

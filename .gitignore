@@ -1,5 +1,10 @@
 # CUSTOM
 
+images-input/*
+!images-input/.gitkeep
+images-output/*
+!images-output/.gitkeep
+config.yaml
 .vscode/
 *.swp
 
