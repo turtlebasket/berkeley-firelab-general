@@ -3,6 +3,8 @@ import numpy as np
 from ratio_pyrometry import ratio_pyrometry_pipeline
 import base64
 import cv2 as cv
+import plotly.figure_factory as ff
+from scipy import stats
 
 app = Flask(
     __name__, 
@@ -18,7 +20,7 @@ def index():
 def ratio_pyro():
     f = request.files['file']
     f_bytes = np.fromstring(f.read(), np.uint8)
-    img_orig, img_res, key = ratio_pyrometry_pipeline(
+    img_orig, img_res, key, ptemps = ratio_pyrometry_pipeline(
         f_bytes,
         ISO=float(request.form['iso']),
         I_Darkcurrent=float(request.form['i_darkcurrent']),
@@ -31,12 +33,34 @@ def ratio_pyro():
         eqn_scaling_factor=float(request.form['equation_scaling_factor'])
     )
 
+    # get base64 encoded images
     img_orig_b64 = base64.b64encode(cv.imencode('.png', img_orig)[1]).decode(encoding='utf-8')
     img_res_b64 = base64.b64encode(cv.imencode('.png', img_res)[1]).decode(encoding='utf-8')
+
+    # generate prob. distribution histogram & return embed
+    fig = ff.create_distplot(
+        [ptemps], 
+        group_labels=[f.name], 
+        show_rug=False,
+        show_hist=False,
+    )
+    fig.update_layout(
+        autosize=False,
+        width=800,
+        height=600,
+    )
+    fig.update_xaxes(
+        title_text="Temperature (°C)",
+    )
+    fig.update_xaxes(
+        title_text="Probability (1/°C)",
+    )
+    freq_plot = fig.to_html()
 
     return render_template(
         'results.jinja2',
         img_orig_b64=img_orig_b64,
         img_res_b64=img_res_b64,
-        legend=key
+        legend=key,
+        freq_plot=freq_plot
     )

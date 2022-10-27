@@ -11,6 +11,9 @@ gunicorn = "*"
 werkzeug = "*"
 pyyaml = "*"
 matplotlib = "*"
+plotly = "*"
+pandas = "*"
+scipy = "==1.8.1"
 
 [dev-packages]
 

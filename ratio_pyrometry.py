@@ -13,10 +13,15 @@ def rg_ratio_normalize(
     ISO, 
     MIN_TEMP, 
     MAX_TEMP,
-    eqn_scaling_factor
+    eqn_scaling_factor,
 ):
+    """
+    Get normalized G/R -> temperature data + list of all temperatures
+    """
     # copy image into new array & chop off alpha values (if applicable)
     imgnew = imgarr.copy()[:,:,:3]
+
+    positive_temps = []
 
     for i in range(len(imgarr)):
         for j in range(len(imgarr[i])):
@@ -32,12 +37,14 @@ def rg_ratio_normalize(
             # remove pixels outside calibration range
             if (MIN_TEMP != None and temp_C < MIN_TEMP) or (MAX_TEMP != None and temp_C > MAX_TEMP):
                 temp_C = MIN_TEMP
+            elif temp_C > MIN_TEMP:
+                positive_temps.append(temp_C)
 
             # scale light intensity to calculated temperature
             pix_i = scale_temp(temp_C, MIN_TEMP, MAX_TEMP)
             imgnew[i][j] = [pix_i, pix_i, pix_i]
 
-    return imgnew
+    return imgnew, positive_temps
 
 
 @jit(nopython=True)
@@ -83,7 +90,7 @@ def ratio_pyrometry_pipeline(
     # read image & crop
     img_orig = cv.imdecode(file_bytes, cv.IMREAD_UNCHANGED)
 
-    img = rg_ratio_normalize(
+    img, ptemps = rg_ratio_normalize(
         img_orig,
         I_Darkcurrent,
         f_stop,
@@ -91,7 +98,7 @@ def ratio_pyrometry_pipeline(
         ISO,
         MIN_TEMP,
         MAX_TEMP,
-        eqn_scaling_factor
+        eqn_scaling_factor,
     )
 
     # build & apply smoothing conv kernel
@@ -126,4 +133,4 @@ def ratio_pyrometry_pipeline(
         tempkey[temps[i]] = f"rgb({c[2]}, {c[1]}, {c[0]})"
 
     # original, transformed, legend
-    return img_orig, img_jet, tempkey
+    return img_orig, img_jet, tempkey, ptemps
