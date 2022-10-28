@@ -14,7 +14,7 @@ app = Flask(
 
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('index.jinja2')
+    return render_template('index.html')
 
 @app.route('/ratio_pyro', methods=['POST'])
 def ratio_pyro():
@@ -58,7 +58,7 @@ def ratio_pyro():
     freq_plot = fig.to_html()
 
     return render_template(
-        'results.jinja2',
+        'results.html',
         img_orig_b64=img_orig_b64,
         img_res_b64=img_res_b64,
         legend=key,
