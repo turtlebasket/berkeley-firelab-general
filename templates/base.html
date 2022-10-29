@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <head>
     <title>Pyrometry Application</title>
-    <link rel="app.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
 </head>
 <body>
+    <div class="navbar">
+        <h3>Pyrometry Toolkit</h3>
+        <div class="navbar-links">
+            <a class="navbar-link" href="/">Ratio Pyrometry</a>
+            <a class="navbar-link" href="/projected_area">Projected Area</a>
+        </div>
+    </div>
+    <br>
     {% block content required %}
     {% endblock %}
 </body>
-
-<style>
-* {
-    font-family: sans-serif;
-}
-</style>

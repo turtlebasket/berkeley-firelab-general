@@ -58,9 +58,19 @@ def ratio_pyro():
     freq_plot = fig.to_html()
 
     return render_template(
-        'results.html',
+        'pyrometry-results.html',
         img_orig_b64=img_orig_b64,
         img_res_b64=img_res_b64,
         legend=key,
         freq_plot=freq_plot
     )
+
+
+@app.route('/projected_area')
+def projected_area():
+    return render_template('projected-area.html')
+
+
+@app.route('/projected_area_results')
+def projected_area_results():
+    return render_template('projected-area-results.html')
