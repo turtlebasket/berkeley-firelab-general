@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 import numpy as np
 from ratio_pyrometry import ratio_pyrometry_pipeline
+from size_projection import get_projected_area
 import base64
 import cv2 as cv
 import plotly.figure_factory as ff
@@ -71,6 +72,19 @@ def projected_area():
     return render_template('projected-area.html')
 
 
-@app.route('/projected_area_results')
+@app.route('/projected_area_results', methods=['POST'])
 def projected_area_results():
-    return render_template('projected-area-results.html')
+    f = request.files['file']
+    f_bytes = np.fromstring(f.read(), np.uint8)
+
+    img, dtable = get_projected_area(
+        f_bytes,
+        int(request.form['area_threshold']),
+        int(request.form['min_display_threshold']),
+    )
+
+    return render_template(
+        'projected-area-results.html',
+        img_b64=img,
+        dtable=dtable
+    )

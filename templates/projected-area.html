@@ -1,6 +1,23 @@
 {% extends "base.html" %}
 {% block content %} 
 
+<form action="/projected_area_results" method="POST" enctype="multipart/form-data">
+    <h2>Projected Area Interface</h2>
 
+    <input id="img-upload" type="file" name="file" accept=".png,.jpg,.jpeg,.tiff" value="Choose Image"/>
+
+    <h4>Settings</h4>
+
+    <label for="area_threshold">Area threshold (to remove dust particles) in px</label>
+    <input type="number" name="area_threshold" value="250"/>
+    <br>
+
+    <label for="min_display_threshold">Minimum display threshold (in px)</label>
+    <input type="number" name="min_display_threshold" value="300"/>
+    <br>
+
+    <br>
+    <input type="submit" value="Generate Projected Sizes"/>
+</form>
 
 {% endblock %}

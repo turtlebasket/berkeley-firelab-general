@@ -1,6 +1,30 @@
 {% extends "base.html" %}
 {% block content %} 
 
+<h2>Results</h2>
+<a href="/projected_area">Process another image</a>
 
+<div style="display: flex; align-items: start;">
+    <img class="image-out-pa" src="data:image/png;base64,{{ img_b64 }}" alt="original image">
+
+    <div style="overflow-y: scroll;">
+    <table style="background: #f1f1f1">
+        <tr>
+            <th class="legend-heading">Index</th>
+            <th class="legend-heading">Area</th>
+            <th class="legend-heading">Copy</th>
+        </tr>
+        {% for item in dtable %}
+        <tr>
+            <td class="legend-cell">{{ item.0 }}</td>
+            <td class="legend-cell">{{ item.1 }} mm²</td>
+            <td>
+                <button onclick="() => navigator.clipboard.writeText('{{ item.1 }}')">Copy</button>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+</div>
 
 {% endblock %}
