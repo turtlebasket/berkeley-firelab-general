@@ -58,25 +58,17 @@
     <input type="submit" value="Generate Heatmap"/>
 </form>
 
+<!-- <script src="/img_preview.js" onload="setOnChange()"></script> -->
 <script>
-let imgPreview = document.getElementById('img-preview');
-let imgUpload = document.getElementById('img-upload');
-imgUpload.onchange = event => {
-    const [file] = imgUpload.files;
-    if (file) {
-        console.log(file)
-        imgPreview.src = URL.createObjectURL(file);
-    }
-};
+    let imgPreview = document.getElementById('img-preview');
+    let imgUpload = document.getElementById('img-upload');
+    imgUpload.onchange = event => {
+        const [file] = imgUpload.files;
+        if (file) {
+            console.log(file)
+            imgPreview.src = URL.createObjectURL(file);
+        }
+    };
 </script>
-
-<style>
-#img-preview {
-    width: 18rem;
-}
-#pyro-eqn {
-    width: 800px;
-}
-</style>
 
 {% endblock %} 

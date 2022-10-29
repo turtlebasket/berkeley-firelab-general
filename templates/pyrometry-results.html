@@ -5,6 +5,7 @@
     <tr>
         <th class="img-table-heading">Input Image</th>
         <th class="img-table-heading">Output Heatmap</th>
+        <th class="img-table-heading">Legend</th>
     </tr>
     <tr>
         {# Original image #}
@@ -15,11 +16,8 @@
         <td class="img-table-cell" id="res-cell">
             <img class="img-out" src="data:image/png;base64,{{ img_res_b64 }}" alt="result image">
         </td>
-    </tr>
-    {# Legend #}
-    <tr>
-        <td class="img-table-cell"></td>
-        <td class="img-table-cell">
+        {# Legend #}
+        <td>
             <table class="legend" id="legend">
                 <tr>
                     <th class="legend-heading">Color</th>

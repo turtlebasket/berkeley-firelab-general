@@ -4,6 +4,9 @@
 <form action="/projected_area_results" method="POST" enctype="multipart/form-data">
     <h2>Projected Area Interface</h2>
 
+    <img src="#" id="img-preview" type="file"/>
+    <br>
+
     <input id="img-upload" type="file" name="file" accept=".png,.jpg,.jpeg,.tiff" value="Choose Image"/>
 
     <h4>Settings</h4>
@@ -19,5 +22,18 @@
     <br>
     <input type="submit" value="Generate Projected Sizes"/>
 </form>
+
+<!-- <script src="/img_preview.js" onload="setOnChange()"></script> -->
+<script>
+    let imgPreview = document.getElementById('img-preview');
+    let imgUpload = document.getElementById('img-upload');
+    imgUpload.onchange = event => {
+        const [file] = imgUpload.files;
+        if (file) {
+            console.log(file)
+            imgPreview.src = URL.createObjectURL(file);
+        }
+    };
+</script>
 
 {% endblock %}

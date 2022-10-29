@@ -6,6 +6,10 @@
 | --- | --- | --- |
 | ![](screenshots/pyro_input.png) | ![](screenshots/pyro_results.png) | ![](screenshots/temp_dist_plot.png) 
 
+| Labeling Input | Labeling Results | 
+| --- | --- |
+| ![](screenshots/projected_area_in.png) | ![](screenshots/projected_area_out.png) |
+
 ## Using the web version 
 
 ### Ratio Pyrometry

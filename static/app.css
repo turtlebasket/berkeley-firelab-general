@@ -33,6 +33,14 @@ html {
     flex-direction: column;
 }
 
+#img-preview {
+    width: 18rem;
+}
+
+#pyro-eqn {
+    width: 800px;
+}
+
 .img-table-heading {
     padding: 4px 10px;
 }

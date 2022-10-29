@@ -1,3 +1,7 @@
+# use headless backend
+import matplotlib
+matplotlib.use("Agg")
+
 import base64
 import cv2 as cv
 import numpy as np
@@ -18,7 +22,7 @@ def get_projected_area(image, area_threshold, display_threshold):
 
     img = morphology.area_closing(thresh_gray, area_threshold=area_threshold, connectivity=1)
 
-    contours = measure.find_contours(array=img, level=100)
+    contours = measure.find_contours(image=img, level=100)
 
     fig, ax = plt.subplots()
     ax.imshow(original, cmap=plt.cm.gray, alpha=0.3)
