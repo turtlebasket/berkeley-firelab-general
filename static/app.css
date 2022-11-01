@@ -28,6 +28,11 @@ html {
     margin-left: 3rem;
 }
 
+.content {
+    display: flex;
+    margin: 0rem 1rem;
+}
+
 .form {
     display: flex;
     flex-direction: column;
