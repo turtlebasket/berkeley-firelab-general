@@ -1,11 +1,11 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, send_file
 import numpy as np
 from ratio_pyrometry import ratio_pyrometry_pipeline
 from size_projection import get_projected_area
 import base64
 import cv2 as cv
 import plotly.figure_factory as ff
-from scipy import stats
+import pandas as pd
 
 app = Flask(
     __name__, 
@@ -58,12 +58,28 @@ def ratio_pyro():
     )
     freq_plot = fig.to_html()
 
+    # create csv-formatted stuff
+    # currently only supports 1 firebrand (grabs first object in plot).
+    plot_data=fig.to_dict()
+    x_data = plot_data["data"][0]["x"]
+    y_data = plot_data["data"][0]["y"]
+
+    tdata = [["Temperature", "Frequency"]]
+    for i in range(len(x_data)):
+        r = []
+        r.append(x_data[i])
+        r.append(y_data[i])
+        tdata.append(r)
+
+    csvstr = pd.DataFrame(tdata).to_csv(index=False, header=False)
+
     return render_template(
         'pyrometry-results.html',
         img_orig_b64=img_orig_b64,
         img_res_b64=img_res_b64,
         legend=key,
-        freq_plot=freq_plot
+        freq_plot=freq_plot,
+        csv_data=csvstr
     )
 
 
@@ -81,6 +97,8 @@ def projected_area_results():
         f_bytes,
         int(request.form['area_threshold']),
         int(request.form['min_display_threshold']),
+        float(request.form['paper_width']),
+        float(request.form['paper_width'])
     )
 
     return render_template(
@@ -88,3 +106,7 @@ def projected_area_results():
         img_b64=img,
         dtable=dtable
     )
+
+# @app.route("/download_pyrometry_temps")
+# def download_pyrometry_temps():
+#     return send_file()

@@ -1,6 +1,12 @@
 {% extends "base.html" %}
+
+{% block head %}
+<script src="/s/js/csv_download.js"></script>
+{% endblock %}
+
 {% block content %} 
 
+<div style="display:flex; flex-direction: column;">
 <table class="img-table">
     <tr>
         <th class="img-table-heading">Input Image</th>
@@ -33,8 +39,17 @@
         </td>
     </tr>
 </table>
+
+<br>
 {# Temperature Frequency Plot #}
+<div style="display: flex; flex-direction: row; align-items: center;">
 <strong>Temperature Distribution</strong>
+<button 
+style="width: 10rem; height: 2rem; margin-left: 1rem;" 
+download="temperature-data.csv" type="text/csv" onclick="saveCsv(`{{csv_data}}`)">Download Data as CSV</button>
+</div>
 {{ freq_plot | safe }}
+
+</div>
 
 {% endblock %}

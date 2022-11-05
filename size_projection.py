@@ -9,9 +9,9 @@ import matplotlib.pyplot as plt
 from skimage import measure, morphology, color, segmentation
 import io
 
-def get_projected_area(image, area_threshold, display_threshold):
+def get_projected_area(image, area_threshold, display_threshold, paper_width, paper_height):
     total_px = image.size
-    total_mm = 60322.46
+    total_mm = paper_width * paper_height * 25.4
 
     output = []
     original = cv.imdecode(image, cv.IMREAD_UNCHANGED)
