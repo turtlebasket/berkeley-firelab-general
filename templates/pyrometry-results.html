@@ -46,7 +46,7 @@
 <strong>Temperature Distribution</strong>
 <button 
 style="width: 10rem; height: 2rem; margin-left: 1rem;" 
-download="temperature-data.csv" type="text/csv" onclick="saveCsv(`{{csv_data}}`)">Download Data as CSV</button>
+onclick="saveData(`{{csv_data}}`, 'temperature-data.csv')">Download Data as CSV</button>
 </div>
 {{ freq_plot | safe }}
 

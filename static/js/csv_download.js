@@ -1,4 +1,4 @@
-function saveCsv(csvStr) {
+function saveData(csvStr, filename) {
     // string rep
     // var csvStr = "";
     // for (let r = 0; r < csvData.length; r++) {
@@ -17,5 +17,12 @@ function saveCsv(csvStr) {
     var data = new Blob([csvStr]);
 
     // create & click temp link
-    window.open(URL.createObjectURL(data));
+    // slightly modded https://stackoverflow.com/a/15832662
+    var link = document.createElement("a");
+    link.download = filename;
+    link.href = URL.createObjectURL(data);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    delete link;
 }
