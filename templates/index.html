@@ -1,4 +1,8 @@
 {% extends "base.html" %}
+
+{% block head %}
+{% endblock %}
+
 {% block content %} 
 <form action="/ratio_pyro" method="POST" enctype="multipart/form-data">
     <h2>Ratio Pyrometry Interface</h2>
@@ -58,17 +62,7 @@
     <input type="submit" value="Generate Heatmap"/>
 </form>
 
-<!-- <script src="/img_preview.js" onload="setOnChange()"></script> -->
-<script>
-    let imgPreview = document.getElementById('img-preview');
-    let imgUpload = document.getElementById('img-upload');
-    imgUpload.onchange = event => {
-        const [file] = imgUpload.files;
-        if (file) {
-            console.log(file)
-            imgPreview.src = URL.createObjectURL(file);
-        }
-    };
-</script>
+<!-- Image Preview -->
+<script src="/s/js/img_preview.js"></script>
 
 {% endblock %} 

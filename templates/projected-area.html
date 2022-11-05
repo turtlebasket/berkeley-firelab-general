@@ -14,26 +14,25 @@
     <label for="area_threshold">Area threshold (to remove dust particles) in px</label>
     <input type="number" name="area_threshold" value="250"/>
     <br>
+    <br>
 
     <label for="min_display_threshold">Minimum display threshold (in px)</label>
     <input type="number" name="min_display_threshold" value="300"/>
+    <br>
+    <br>
+
+    <label for="min_display_threshold">Page size</label>
+    <input type="number" name="paper_width" value="8.5"/>
+    X
+    <input type="number" name="paper_height" value="11"/> inches
+    <br>
     <br>
 
     <br>
     <input type="submit" value="Generate Projected Sizes"/>
 </form>
 
-<!-- <script src="/img_preview.js" onload="setOnChange()"></script> -->
-<script>
-    let imgPreview = document.getElementById('img-preview');
-    let imgUpload = document.getElementById('img-upload');
-    imgUpload.onchange = event => {
-        const [file] = imgUpload.files;
-        if (file) {
-            console.log(file)
-            imgPreview.src = URL.createObjectURL(file);
-        }
-    };
-</script>
+<!-- Image Preview -->
+<script src="/s/js/img_preview.js"></script>
 
 {% endblock %}
