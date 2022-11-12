@@ -4,7 +4,7 @@ import cv2 as cv
 import numpy as np
 
 # edge-detection kernel amplification
-AMPLIFIER=9
+AMPLIFIER=8
 
 MIN_INTENSITY=100
 
