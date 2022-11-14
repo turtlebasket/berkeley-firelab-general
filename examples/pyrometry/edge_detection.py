@@ -2,26 +2,50 @@
 
 import cv2 as cv
 import numpy as np
+from skimage import measure, morphology, color, segmentation
+import matplotlib.pyplot as plt
 
-# edge-detection kernel amplification
-AMPLIFIER=8
-
-MIN_INTENSITY=100
-
-# file = '01-0001-cropped.png'
-file = 'streaktest.png'
-file_name = file.split(".")[0]
-file_ext = file.split(".")[1]
-
+file = 'streaktest2.png'
 img = cv.imread(file)
 
-img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+# blurred = cv.GaussianBlur(img, (8, 8), 0)
 
-kernel = np.array([
-    [-1, -1, -1],
-    [-1, AMPLIFIER, -1],
-    [-1, -1, -1],
-])
-img = cv.filter2D(src=img, ddepth=-1, kernel=kernel)
+retval, thresh_gray = cv.threshold(img, 120, 255, cv.THRESH_BINARY)
 
-cv.imwrite(f'{file_name}-edge-detection.{file_ext}', img)
+kernel = np.ones((7, 7), np.uint8)
+image = cv.morphologyEx(thresh_gray, cv.MORPH_CLOSE, kernel, iterations=1)
+gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+
+retval, gray = cv.threshold(gray, 0, 255, cv.THRESH_BINARY)
+
+gray = cv.copyMakeBorder(
+    gray, 
+    20, 
+    20, 
+    20, 
+    20, 
+    cv.BORDER_CONSTANT, 
+    value=0
+)
+
+contours = measure.find_contours(array=gray, level=100)
+
+fig, ax = plt.subplots()
+ax.imshow(gray, cmap=plt.cm.gray, alpha=1)
+
+def calculate_area(countour):
+    c = np.expand_dims(countour.astype(np.float32), 1)
+    c = cv.UMat(c)
+    
+    return cv.contourArea(c)
+
+for contour in contours:
+    area = calculate_area(contour)
+    
+    if calculate_area(contour) > 250:
+        ax.plot(contour[:, 1], contour[:, 0], linewidth=0.5, color='orangered')
+
+ax.axis('image')
+ax.set_xticks([])
+ax.set_yticks([])
+plt.savefig("edge_detection_figure.png", dpi=500)
