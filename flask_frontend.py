@@ -1,11 +1,10 @@
 from flask import Flask, render_template, request, send_file
 import numpy as np
+from plotly_util import generate_plotly_temperature_pdf
 from ratio_pyrometry import ratio_pyrometry_pipeline
 from size_projection import get_projected_area
 import base64
 import cv2 as cv
-import plotly.figure_factory as ff
-import pandas as pd
 
 app = Flask(
     __name__, 
@@ -21,7 +20,7 @@ def index():
 def ratio_pyro():
     f = request.files['file']
     f_bytes = np.fromstring(f.read(), np.uint8)
-    img_orig, img_res, key, ptemps = ratio_pyrometry_pipeline(
+    img_orig, img_res, key, ptemps, indiv_firebrands = ratio_pyrometry_pipeline(
         f_bytes,
         ISO=float(request.form['iso']),
         I_Darkcurrent=float(request.form['i_darkcurrent']),
@@ -31,47 +30,28 @@ def ratio_pyro():
         MIN_TEMP=float(request.form['min_temp']),
         smoothing_radius=int(request.form['smoothing_radius']),
         key_entries=int(request.form['legend_entries']),
-        eqn_scaling_factor=float(request.form['equation_scaling_factor'])
+        eqn_scaling_factor=float(request.form['equation_scaling_factor']),
+        firebrand_min_intensity_threshold=float(request.form['intensity_threshold']),
+        firebrand_min_area=float(request.form['min_area']),
     )
 
     # get base64 encoded images
     img_orig_b64 = base64.b64encode(cv.imencode('.png', img_orig)[1]).decode(encoding='utf-8')
     img_res_b64 = base64.b64encode(cv.imencode('.png', img_res)[1]).decode(encoding='utf-8')
 
-    # generate prob. distribution histogram & return embed
-    fig = ff.create_distplot(
-        [ptemps], 
-        group_labels=[f.filename], 
-        show_rug=False,
-        show_hist=False,
-    )
-    fig.update_layout(
-        autosize=False,
-        width=800,
-        height=600,
-    )
-    fig.update_xaxes(
-        title_text="Temperature (°C)",
-    )
-    fig.update_yaxes(
-        title_text="Probability (1/°C)",
-    )
-    freq_plot = fig.to_html()
+    ptemps_list = [ptemps]
 
-    # create csv-formatted stuff
-    # currently only supports 1 firebrand (grabs first object in plot).
-    plot_data=fig.to_dict()
-    x_data = plot_data["data"][0]["x"]
-    y_data = plot_data["data"][0]["y"]
+    for i in range(len(indiv_firebrands)):
+        # base64 encode image data
+        brand_data = indiv_firebrands[i]
+        unencoded = brand_data["img_data"]
+        brand_data["img_data"] = base64.b64encode(cv.imencode('.png', unencoded)[1]).decode(encoding='utf-8')
+        indiv_firebrands[i] = brand_data
+        
+        # add ptemp data to list
+        ptemps_list.append(brand_data["ptemps"])
 
-    tdata = [["Temperature", "Frequency"]]
-    for i in range(len(x_data)):
-        r = []
-        r.append(x_data[i])
-        r.append(y_data[i])
-        tdata.append(r)
-
-    csvstr = pd.DataFrame(tdata).to_csv(index=False, header=False)
+    freq_plot, csvstrs = generate_plotly_temperature_pdf(ptemps_list)
 
     return render_template(
         'pyrometry-results.html',
@@ -79,7 +59,8 @@ def ratio_pyro():
         img_res_b64=img_res_b64,
         legend=key,
         freq_plot=freq_plot,
-        csv_data=csvstr
+        csv_data=csvstrs[0],
+        individual_firebrands=indiv_firebrands,
     )
 
 

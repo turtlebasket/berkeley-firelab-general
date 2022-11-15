@@ -7,6 +7,9 @@
 {% block content %} 
 
 <div style="display:flex; flex-direction: column;">
+
+<h2>General Results</h2>
+
 <table class="img-table">
     <tr>
         <th class="img-table-heading">Input Image</th>
@@ -40,6 +43,44 @@
     </tr>
 </table>
 
+
+<h2>Individual Firebrands</h2>
+
+<table>
+    <tr>
+        <th>Output Heatmap</th>
+        <th>Legend</th>
+    </tr>
+
+    {% for item in individual_firebrands %}
+    <tr>
+        {# output heatmap #}
+        <td>
+            <img class="img-out" src="data:image/png;base64,{{ item['img_data'] }}" alt="result image">
+        </td>
+
+        </td>
+        {# legend #}
+        <td>
+            <h3>Firebrand {{ loop.index }}</h3>
+            <table class="legend" id="legend">
+                <tr>
+                    <th class="legend-heading">Color</th>
+                    <th class="legend-heading">Temperature</th>
+                </tr>
+                {% for temp, color in item["legend"].items() %}
+                <tr>
+                    <td class="legend-cell"><div style="width:30px;height:20px;background-color:{{ color }};"></div></td>
+                    <td class="legend-cell">{{ temp }}°C</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </td>
+    </tr>
+    {% endfor %}
+
+</table>
+
 <br>
 {# Temperature Frequency Plot #}
 <div style="display: flex; flex-direction: row; align-items: center;">
@@ -49,6 +90,9 @@ style="width: 10rem; height: 2rem; margin-left: 1rem;"
 onclick="saveData(`{{csv_data}}`, 'temperature-data.csv')">Download Data as CSV</button>
 </div>
 {{ freq_plot | safe }}
+
+
+<!-- Firebrands: {{ individual_firebrands }} -->
 
 </div>
 
